@@ -1,0 +1,400 @@
+﻿/* Стили для лекций */
+.lecture-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+.progress-bar {
+    height: 5px;
+    background: rgba(0, 242, 255, 0.2);
+    border-radius: 5px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    transition: width 0.5s;
+}
+
+.lecture-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.back-button:hover {
+    color: var(--accent-color);
+    transform: translateX(-5px);
+}
+
+.lecture-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8rem;
+    margin: 10px 0;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.lecture-meta {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.difficulty {
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-weight: 500;
+}
+
+.difficulty.beginner {
+    background: rgba(0, 255, 136, 0.2);
+    color: var(--accent-color);
+}
+
+.duration i {
+    margin-right: 5px;
+}
+
+/* Блоки контента */
+.lecture-section {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.title-number {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.2rem;
+}
+
+.section-content {
+    line-height: 1.8;
+}
+
+.section-content p {
+    margin-bottom: 20px;
+}
+
+/* Блок с примером */
+.example-block {
+    background: rgba(0, 114, 255, 0.1);
+    border-left: 3px solid var(--secondary-color);
+    padding: 20px;
+    border-radius: 0 5px 5px 0;
+    margin: 25px 0;
+}
+
+.example-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.example-header i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.example-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Сетка типов киберзапугивания */
+.types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.type-card {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.type-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
+    border-color: var(--secondary-color);
+}
+
+.type-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.type-card h4 {
+    margin: 10px 0;
+    color: var(--secondary-color);
+}
+
+/* Шаги защиты */
+.steps {
+    margin-top: 30px;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 25px;
+    align-items: flex-start;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.step-content h4 {
+    margin: 0 0 8px 0;
+    color: var(--accent-color);
+}
+
+/* Блок с тестом */
+.quiz-block {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    border-radius: 10px;
+    padding: 25px;
+    margin: 50px 0;
+}
+
+.quiz-block h3 {
+    margin-top: 0;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+}
+
+.quiz-block h3 i {
+    margin-right: 10px;
+}
+
+.quiz-question {
+    margin-top: 20px;
+}
+
+.quiz-options {
+    margin: 20px 0;
+}
+
+.quiz-option {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quiz-option:hover {
+    background: rgba(0, 114, 255, 0.2);
+}
+
+.quiz-submit {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quiz-submit:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+/* Заключительный блок */
+.conclusion-block {
+    background: rgba(0, 255, 136, 0.1);
+    border-left: 3px solid var(--accent-color);
+    padding: 25px;
+    border-radius: 0 5px 5px 0;
+    margin: 50px 0;
+}
+
+.conclusion-block h3 {
+    margin-top: 0;
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+}
+
+.conclusion-block h3 i {
+    margin-right: 10px;
+}
+
+.key-points {
+    padding-left: 20px;
+}
+
+.key-points li {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.key-points li::before {
+    content: '✓';
+    color: var(--accent-color);
+    position: absolute;
+    left: -20px;
+}
+
+/* Подвал лекции */
+.lecture-footer {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.next-lecture {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    margin-bottom: 30px;
+}
+
+.next-lecture i {
+    margin-left: 10px;
+    transition: transform 0.3s;
+}
+
+.next-lecture:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.3);
+}
+
+.next-lecture:hover i {
+    transform: translateX(5px);
+}
+
+.lecture-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.action-button {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.action-button i {
+    margin-right: 8px;
+}
+
+.action-button:hover {
+    background: rgba(0, 242, 255, 0.1);
+    color: var(--secondary-color);
+}
+
+/* Анимации */
+.animate-pop {
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-slide {
+    animation: slideIn 0.8s ease-out forwards;
+}
+
+.animate-fade {
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideIn {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .lecture-title {
+        font-size: 2rem;
+    }
+    
+    .types-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+}

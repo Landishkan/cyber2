@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Защита сети | Кибербезопасность</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../game/css/game.css">
+    <link rel="stylesheet" href="css/network-defense.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <a href="../games.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Все игры
+            </a>
+            <h1>ЗАЩИТА СЕТИ</h1>
+            <div class="game-stats">
+                <div id="level">Уровень: <span>1</span></div>
+                <div id="health">Здоровье: <span>100%</span></div>
+                <div id="score">Очки: <span>0</span></div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="network-visualization">
+                <div class="server" id="main-server">
+                    <i class="fas fa-server"></i>
+                    <div class="server-label">Сервер</div>
+                </div>
+                <div class="connection-line"></div>
+                <div class="firewall" id="firewall">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="firewall-label">Фаервол</div>
+                    <div class="firewall-strength">Защита: <span>100%</span></div>
+                </div>
+                <div class="connection-line"></div>
+                <div class="router">
+                    <i class="fas fa-wifi"></i>
+                    <div class="router-label">Роутер</div>
+                </div>
+            </div>
+
+            <div class="attack-log">
+                <h3>Журнал атак:</h3>
+                <div class="log-entries" id="attack-log">
+                    <div class="log-entry">Система защиты активирована. Ожидание атак...</div>
+                </div>
+            </div>
+
+            <div class="defense-options">
+                <h3>Действия защиты:</h3>
+                <div class="options-grid">
+                    <button class="defense-action" data-action="update">
+                        <i class="fas fa-sync-alt"></i> Обновить ПО
+                    </button>
+                    <button class="defense-action" data-action="block">
+                        <i class="fas fa-ban"></i> Блокировать IP
+                    </button>
+                    <button class="defense-action" data-action="scan">
+                        <i class="fas fa-search"></i> Сканировать
+                    </button>
+                    <button class="defense-action" data-action="backup">
+                        <i class="fas fa-database"></i> Резервная копия
+                    </button>
+                </div>
+            </div>
+
+            <div class="attack-info">
+                <h3>Текущая атака: <span id="current-attack">Нет</span></h3>
+                <div class="attack-progress">
+                    <div class="progress-bar">
+                        <div class="progress" id="attack-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-overlay" id="tutorial">
+            <div class="tutorial-content">
+                <h2>Как играть в "Защиту сети"?</h2>
+                <p>Ваша задача - защитить сервер от хакерских атак, используя доступные инструменты защиты.</p>
+                <ul>
+                    <li><strong>Обновить ПО</strong> - устраняет уязвимости в системе</li>
+                    <li><strong>Блокировать IP</strong> - останавливает текущую атаку</li>
+                    <li><strong>Сканировать</strong> - выявляет скрытые угрозы</li>
+                    <li><strong>Резервная копия</strong> - восстанавливает здоровье сервера</li>
+                </ul>
+                <p>Каждая успешная защита приносит очки. Чем быстрее вы реагируете, тем больше очков получаете!</p>
+                <button id="start-game" class="cyber-button">
+                    <span class="button-content">
+                        <span class="button-text">Начать игру</span>
+                    </span>
+                    <span class="button-glitch"></span>
+                </button>
+            </div>
+        </div>
+        <div class="game-modal" id="result-modal">
+    <div class="modal-content cyber-card">
+        <div class="modal-icon" id="modal-icon">🏆</div>
+        <h2 id="modal-title">Победа!</h2>
+        <p id="modal-message">Вы защитили сервер!</p>
+        <div class="modal-stats">
+            <div>Уровень: <span id="mod-level">1</span></div>
+            <div>Очки: <span id="mod-score">0</span></div>
+        </div>
+        <button id="modal-restart" class="cyber-button">
+            <span class="button-content">
+                <span class="button-text">Играть снова</span>
+            </span>
+            <span class="button-glitch"></span>
+        </button>
+    </div>
+</div>
+    </div>
+
+    <script src="js/network-defense.js"></script>
+</body>
+</html>

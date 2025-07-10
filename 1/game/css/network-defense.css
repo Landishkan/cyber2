@@ -1,0 +1,350 @@
+﻿/* Основные стили игры */
+.game-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    margin-top: 30px;
+}
+
+.network-visualization {
+    grid-column: 1 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 30px;
+    position: relative;
+    height: 200px;
+}
+
+.server, .firewall, .router {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+}
+
+.server i, .firewall i, .router i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.server-label, .firewall-label, .router-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+}
+
+.firewall-strength {
+    font-size: 0.9rem;
+    margin-top: 5px;
+    color: var(--text-secondary);
+}
+
+.connection-line {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--secondary-color), transparent);
+    position: relative;
+}
+
+.connection-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, var(--secondary-color));
+    animation: connectionFlow 2s infinite linear;
+}
+
+@keyframes connectionFlow {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Журнал атак */
+.attack-log {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    height: 300px;
+    overflow-y: auto;
+}
+
+.attack-log h3 {
+    color: var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.log-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.log-entry {
+    padding: 8px 12px;
+    background: rgba(0, 242, 255, 0.1);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--secondary-color);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Опции защиты */
+.defense-options {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.defense-options h3 {
+    color: var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 15px;
+}
+
+.defense-action {
+    padding: 15px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+}
+
+.defense-action:hover {
+    background: rgba(0, 242, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.defense-action:active {
+    transform: translateY(0);
+}
+
+.defense-action i {
+    font-size: 1.2rem;
+}
+
+/* Информация об атаке */
+.attack-info {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.attack-info h3 {
+    color: var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.attack-progress {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 45, 117, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #ff2d75, #ff6b8b);
+    width: 0%;
+    transition: width 0.1s;
+}
+
+/* Обучающее окно */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.tutorial-content {
+    background: var(--background-light);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    border: 2px solid var(--accent-color);
+    animation: scaleIn 0.3s ease-out;
+}
+
+.tutorial-content h2 {
+    color: var(--accent-color);
+    font-family: 'Orbitron', sans-serif;
+    margin-top: 0;
+}
+
+.tutorial-content ul {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+.tutorial-content li {
+    margin-bottom: 10px;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Анимации атак */
+@keyframes serverUnderAttack {
+    0% { color: var(--secondary-color); }
+    50% { color: #ff2d75; }
+    100% { color: var(--secondary-color); }
+}
+
+.server-under-attack {
+    animation: serverUnderAttack 0.5s infinite;
+}
+
+.firewall-weakened {
+    animation: serverUnderAttack 1s infinite;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .game-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .network-visualization {
+        height: auto;
+        flex-direction: column;
+        padding: 20px;
+    }
+    
+    .connection-line {
+        width: 4px;
+        height: 40px;
+        background: linear-gradient(to bottom, var(--secondary-color), transparent);
+    }
+    
+    .connection-line::after {
+        background: linear-gradient(to bottom, transparent, var(--secondary-color));
+    }
+}
+@keyframes victoryPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.victory-effect {
+    animation: victoryPulse 1s infinite, glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 10px #00ff88; }
+    to { box-shadow: 0 0 30px #00ff88, 0 0 50px #00ff88; }
+}
+/* Модальное окно результата */
+.game-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.5s;
+}
+
+.modal-content {
+    background: var(--background-light);
+    border: 2px solid var(--accent-color);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    transform: scale(0.9);
+    animation: modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalAppear {
+    to { transform: scale(1); }
+}
+
+.modal-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    to { transform: translateY(-15px); }
+}
+
+.modal-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+#modal-restart {
+    margin-top: 25px;
+}
+
+/* Для поражения */
+.defeat .modal-icon { color: #ff2d75; }
+.defeat .modal-content { border-color: #ff2d75; }

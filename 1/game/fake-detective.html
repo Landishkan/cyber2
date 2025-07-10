@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фейковый детектив | Кибербезопасность</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/fake-detective.css">
+</head>
+<body>
+    <div class="cyber-container">
+        <header class="cyber-header">
+            <a href="../games.html" class="back-button cyber-button small">
+                <i class="fas fa-arrow-left"></i> Назад к играм
+            </a>
+            <h1 class="cyber-title">ФЕЙКОВЫЙ ДЕТЕКТИВ</h1>
+            <div class="cyber-stats">
+                <span><i class="fas fa-shield-alt"></i> Уровень: <span class="accent" id="level">1/10</span></span>
+                <span><i class="fas fa-star"></i> Счёт: <span class="accent" id="score">0</span></span>
+            </div>
+        </header>
+
+        <div class="cyber-card" id="gameCard">
+            <h2 class="content-title" id="content-title">Загрузка...</h2>
+            <p class="content-text" id="content-text"></p>
+            
+            <div class="cyber-choices">
+                <button class="cyber-button fake" id="fake-btn">
+                    <i class="fas fa-times-circle"></i> ФЕЙК
+                </button>
+                <button class="cyber-button true" id="true-btn">
+                    <i class="fas fa-check-circle"></i> ПРАВДА
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-popup" id="messagePopup"></div>
+    
+    <div class="game-end" id="gameEnd">
+        <h2>МИССИЯ ЗАВЕРШЕНА</h2>
+        <p id="finalScore">Вы обнаружили 0 из 10 фейков</p>
+        <button class="restart-btn" id="restartBtn">
+            <i class="fas fa-redo"></i> ИГРАТЬ СНОВА
+        </button>
+    </div>
+
+    <script src="js/fake-detective.js"></script>
+</body>
+</html>
