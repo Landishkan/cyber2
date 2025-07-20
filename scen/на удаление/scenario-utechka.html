@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Утечка данных - Кибербезопасность</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">  
+    <link rel="stylesheet" href="scenario.css">
+</head>
+<body>
+    <div class="page-transition"></div>
+    
+    <div class="scenario-page">
+        <div class="scenario-header">
+            <h1 class="scenario-title">Утечка данных</h1>
+            <p class="scenario-description">Интерактивный сценарий: что делать, если ваши персональные данные оказались в открытом доступе в интернете.</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="scenario-steps">
+            <!-- Шаг 1 -->
+            <div class="step" id="step1">
+                <div class="step-title-container">
+                    <span class="step-number">1</span>
+                    <h3 class="step-title">Обнаружение утечки</h3>
+                </div>
+                <div class="step-content">
+                    <p>Вы получили уведомление от сервиса, которым пользуетесь, о возможной утечке данных. Также друзья сообщают, что видели ваши данные в интернете. Что вы сделаете в первую очередь?</p>
+                    
+                    <div class="action-buttons">
+                        <button class="action-button primary-action" onclick="nextStep(1, 1)">Проверить, какие данные были утекли</button>
+                        <button class="action-button secondary-action" onclick="nextStep(1, 2)">Немедленно сменить пароль на этом сервисе</button>
+                        <button class="action-button secondary-action" onclick="nextStep(1, 3)">Проигнорировать, так как это может быть фейк</button>
+                    </div>
+                    
+                    <div class="result good-result" id="result1-1">
+                        <div class="result-title">Правильный выбор!</div>
+                        <p>Первым делом важно понять, какие именно данные были скомпрометированы. Это поможет вам предпринять правильные дальнейшие действия.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result1-2">
+                        <div class="result-title">Не самое лучшее решение</div>
+                        <p>Смена пароля - важный шаг, но сначала нужно понять масштаб утечки. Возможно, были утекли и другие данные, требующие внимания.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result1-3">
+                        <div class="result-title">Опасное решение!</div>
+                        <p>Игнорирование утечки данных может привести к серьезным последствиям, включая кражу личных данных и финансовые потери.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Шаг 2 -->
+            <div class="step" id="step2" style="display: none;">
+                <div class="step-title-container">
+                    <span class="step-number">2</span>
+                    <h3 class="step-title">Анализ ситуации</h3>
+                </div>
+                <div class="step-content">
+                    <p>Вы узнали, что были утекли ваш email, пароль и номер телефона. Этот пароль вы использовали и на других сервисах. Какие действия вы предпримете?</p>
+                    
+                    <div class="action-buttons">
+                        <button class="action-button primary-action" onclick="nextStep(2, 1)">Сменить пароль на всех сервисах, где использовался этот пароль</button>
+                        <button class="action-button secondary-action" onclick="nextStep(2, 2)">Сменить пароль только на этом сервисе</button>
+                        <button class="action-button secondary-action" onclick="nextStep(2, 3)">Включить двухфакторную аутентификацию и больше ничего не делать</button>
+                    </div>
+                    
+                    <div class="result good-result" id="result2-1">
+                        <div class="result-title">Отличный выбор!</div>
+                        <p>Использование одного пароля на нескольких сервисах - распространенная ошибка. Смена паролей везде, где он использовался, защитит ваши аккаунты.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result2-2">
+                        <div class="result-title">Рискованно!</div>
+                        <p>Если не сменить пароль на других сервисах, злоумышленники могут получить доступ и к ним. Это называется "цепочка взломов".</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result2-3">
+                        <div class="result-title">Недостаточно!</div>
+                        <p>Двухфакторная аутентификация - это хорошо, но не отменяет необходимости сменить скомпрометированные пароли.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Шаг 3 -->
+            <div class="step" id="step3" style="display: none;">
+                <div class="step-title-container">
+                    <span class="step-number">3</span>
+                    <h3 class="step-title">Защита аккаунтов</h3>
+                </div>
+                <div class="step-content">
+                    <p>Теперь нужно защитить свои аккаунты от возможного взлома. Какие меры вы примете?</p>
+                    
+                    <div class="action-buttons">
+                        <button class="action-button primary-action" onclick="nextStep(3, 1)">Включу двухфакторную аутентификацию и буду использовать менеджер паролей</button>
+                        <button class="action-button secondary-action" onclick="nextStep(3, 2)">Запишу новые пароли в блокнот, чтобы не забыть</button>
+                        <button class="action-button secondary-action" onclick="nextStep(3, 3)">Буду использовать простые пароли, которые легко запомнить</button>
+                    </div>
+                    
+                    <div class="result good-result" id="result3-1">
+                        <div class="result-title">Идеальное решение!</div>
+                        <p>Менеджер паролей поможет создавать и хранить сложные уникальные пароли для каждого сервиса, а двухфакторная аутентификация добавит дополнительный уровень защиты.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result3-2">
+                        <div class="result-title">Ненадежно!</div>
+                        <p>Хранение паролей в блокноте небезопасно - блокнот могут потерять или украсть. Лучше использовать специализированные менеджеры паролей.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result3-3">
+                        <div class="result-title">Очень рискованно!</div>
+                        <p>Простые пароли легко взломать. Современные компьютеры могут подобрать простой пароль за секунды.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Шаг 4 -->
+            <div class="step" id="step4" style="display: none;">
+                <div class="step-title-container">
+                    <span class="step-number">4</span>
+                    <h3 class="step-title">Мониторинг активности</h3>
+                </div>
+                <div class="step-content">
+                    <p>После утечки данных важно отслеживать возможные последствия. Как вы будете это делать?</p>
+                    
+                    <div class="action-buttons">
+                        <button class="action-button primary-action" onclick="nextStep(4, 1)">Настрою уведомления о входе в аккаунты и проверю банковские операции</button>
+                        <button class="action-button secondary-action" onclick="nextStep(4, 2)">Буду регулярно проверять email на наличие подозрительных писем</button>
+                        <button class="action-button secondary-action" onclick="nextStep(4, 3)">Ничего не буду делать, так как уже сменил пароли</button>
+                    </div>
+                    
+                    <div class="result good-result" id="result4-1">
+                        <div class="result-title">Правильный подход!</div>
+                        <p>Мониторинг активности в аккаунтах и банковских операций поможет быстро обнаружить и предотвратить возможные мошеннические действия.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result4-2">
+                        <div class="result-title">Недостаточно!</div>
+                        <p>Хотя проверка email важна, этого мало. Мошенники могут действовать и без отправки вам писем.</p>
+                    </div>
+                    
+                    <div class="result bad-result" id="result4-3">
+                        <div class="result-title">Опасно!</div>
+                        <p>Даже после смены паролей утекшие данные могут быть использованы для социальной инженерии или других атак.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Шаг 5 - Завершение -->
+            <div class="step" id="step5" style="display: none;">
+                <div class="step-title-container">
+                    <span class="step-number">5</span>
+                    <h3 class="step-title">Завершение сценария</h3>
+                </div>
+                <div class="step-content">
+                   <div class="final-result">
+    <h3>Сценарий завершен!</h3>
+    <p>Ваш результат: <span id="finalScore">0/50</span></p>
+    <p id="finalRating" style="font-weight: bold; margin: 15px 0;"></p>
+                        <p>Вы успешно прошли сценарий по действиям при утечке данных. Вот основные выводы:</p>
+                        <ul>
+                            <li>Всегда сначала определяйте, какие данные были скомпрометированы</li>
+                            <li>Немедленно меняйте пароли на всех сервисах, где использовался утекший пароль</li>
+                            <li>Используйте менеджер паролей и двухфакторную аутентификацию</li>
+                            <li>Мониторьте активность в своих аккаунтах после утечки</li>
+                            <li>Будьте осторожны с фишинг-атаками после утечки</li>
+                        </ul>
+                        
+                        <div class="action-buttons">
+                            <button class="action-button primary-action" onclick="restartScenario()">Пройти снова</button>
+                            <a href="../index.html" class="action-button secondary-action">Вернуться на главную</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="scenario.js">
+        console.log('Debug: Script loaded');
+console.log('Steps container:', document.querySelector('.scenario-steps'));
+console.log('CSS loaded:', !!document.querySelector('link[href*="scenario.css"]'));
+    </script>
+</body>
+</html>

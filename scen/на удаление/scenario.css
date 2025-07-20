@@ -1,0 +1,171 @@
+﻿/* scenario.css */
+/* Основные стили для страницы сценария */
+.scenario-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.scenario-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.scenario-title {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.scenario-description {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Стили для шагов сценария */
+.scenario-steps {
+    margin-top: 50px;
+}
+
+.step {
+    background: rgba(18, 18, 53, 0.7);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.step:hover {
+    border-left-color: var(--accent-color);
+    box-shadow: 0 5px 15px rgba(0, 114, 255, 0.2);
+}
+
+.step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.step-title {
+    display: inline-block;
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.step-content {
+    margin-top: 20px;
+    padding-left: 45px;
+}
+
+/* Стили для интерактивных элементов */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.primary-action {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+}
+
+.secondary-action {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 114, 255, 0.3);
+}
+
+/* Стили для результатов выбора */
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+}
+
+.good-result {
+    background: rgba(0, 255, 136, 0.1);
+    border-left: 4px solid var(--accent-color);
+}
+
+.bad-result {
+    background: rgba(255, 45, 117, 0.1);
+    border-left: 4px solid var(--error-color);
+}
+
+.result-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Прогресс бар */
+.progress-container {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin: 30px 0;
+}
+
+.progress-bar {
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* Анимации */
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 242, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.5); }
+}
+
+.highlight {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .scenario-page {
+        padding: 20px 15px;
+    }
+    
+    .step {
+        padding: 20px 15px;
+    }
+    
+    .step-content {
+        padding-left: 0;
+    }
+}

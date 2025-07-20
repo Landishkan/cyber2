@@ -1,0 +1,559 @@
+﻿/* Стили для игрового контейнера */
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    margin-right: 20px;
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.game-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    margin: 10px 0;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.game-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 1.1rem;
+}
+
+/* Поле с паролем */
+.password-display {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+.difficulty-info {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.1rem;
+    color: var(--accent-color); /* */
+}
+
+.password-rules {
+    background: rgba(0, 114, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.rule-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.rule-item i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+/* Стили для выбора сложности */
+.difficulty-selector {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.difficulty-selector h2 {
+    color: var(--accent-color);
+    margin-bottom: 30px;
+}
+
+.difficulty-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.difficulty-option {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.difficulty-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
+    border-color: var(--secondary-color);
+}
+
+.difficulty-option h3 {
+    color: var(--secondary-color);
+    margin-top: 0;
+}
+
+.difficulty-option p {
+    margin: 10px 0;
+    color: var(--text-secondary);
+}
+
+.difficulty-option[data-level="1"] {
+    border-color: #00ff88;
+}
+
+.difficulty-option[data-level="2"] {
+    border-color: #ffcc00;
+}
+
+.difficulty-option[data-level="3"] {
+    border-color: #ff3d3d;
+}
+.digit {
+    width: 60px;
+    height: 80px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Попытки */
+.attempts {
+    margin: 30px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.attempt {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.attempt-digit {
+    width: 40px;
+    height: 50px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.correct {
+    background-color: var(--accen-color); /* */ 
+    color: var(--background-dark);
+}
+
+.present {
+    background-color: #ffcc00;
+    color: var(--background-dark);
+}
+
+.absent {
+    background-color: #ff3d3d;
+    color: white;
+}
+
+/* Поле ввода */
+.input-area {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+#guess-input {
+    width: 200px;
+    padding: 12px 15px;
+    font-size: 1.2rem;
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    background: rgba(0, 242, 255, 0.1);
+    color: white;
+    text-align: center;
+}
+
+#guess-button {
+    padding: 12px 25px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#guess-button:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+/* Подсказки */
+.hint {
+    text-align: center;
+    margin: 20px 0;
+    min-height: 24px;
+    color: var(--accen-color);
+}
+
+/* Кнопки управления */
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+#hint-button {
+    background: linear-gradient(45deg, #ffcc00, #ff9900);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 0 5px;
+}
+
+#hint-button:hover {
+    background: linear-gradient(45deg, #ff9900, #ff6600);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+}
+
+#hint-button:disabled {
+    background: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#hint-button i {
+    margin-right: 8px;
+}
+#hint-button.active {
+    background: linear-gradient(45deg, #ffcc00, #ff9900);
+    color: #000;
+    cursor: pointer;
+}
+.game-controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#hint-button {
+    background: rgba(0, 242, 255, 0.2);
+    color: var(--secondary-color);
+}
+
+#hint-button:hover {
+    background: rgba(0, 242, 255, 0.3);
+}
+
+#new-game-button {
+    background: rgba(255, 45, 117, 0.2);
+    color: var(--error-color);
+}
+
+#new-game-button:hover {
+    background: rgba(255, 45, 117, 0.3);
+}
+
+/* Модальное окно */
+.game-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--background-light);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: 2px solid var(--accent-color);
+}
+
+.modal-content h2 {
+    color: var(--accent-color);
+    margin-top: 0;
+}
+
+.modal-content button {
+    padding: 12px 30px;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.modal-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .game-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .back-button {
+        margin-bottom: 15px;
+    }
+    
+    .digit {
+        width: 50px;
+        height: 70px;
+        font-size: 2rem;
+    }
+    
+    #guess-input {
+        width: 150px;
+    }
+}
+/* Стили для контейнера игры "Фейковый детектив" */
+.fake-detective-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+/* Заголовок и статистика (аналогично предыдущей игре) */
+.fake-detective-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.fake-detective-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    margin: 10px 0;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.fake-detective-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 1.1rem;
+}
+
+/* Блок с контентом для проверки */
+.content-to-check {
+    background: rgba(18, 18, 53, 0.7);
+    border: 1px solid rgba(58, 107, 255, 0.2);
+    border-radius: 10px;
+    padding: 25px;
+    margin: 30px 0;
+    transition: all 0.3s;
+}
+
+.content-to-check:hover {
+    border-color: var(--secondary-color);
+}
+
+.content-to-check img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Варианты ответов */
+.answer-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.answer-button {
+    padding: 12px 25px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 180px;
+    text-align: center;
+}
+
+.answer-button:hover {
+    background: rgba(0, 242, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+/* Подсказки и пояснения */
+.hint-explanation {
+    background: rgba(0, 114, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 3px solid var(--secondary-color);
+    display: none; /* Показывается после ответа */
+}
+
+.hint-explanation.show {
+    display: block;
+}
+
+.hint-explanation h4 {
+    color: var(--accent-color);
+    margin-top: 0;
+}
+
+/* Индикатор прогресса */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 242, 255, 0.1);
+    border-radius: 5px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    width: 0%;
+    transition: width 0.5s;
+}
+
+/* Кнопки управления (аналогично предыдущей игре) */
+.fake-detective-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.fake-detective-controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#next-button {
+    background: var(--primary-color);
+    color: white;
+}
+
+#next-button:hover {
+    background: var(--primary-light);
+}
+
+#hint-button {
+    background: rgba(0, 242, 255, 0.2);
+    color: var(--secondary-color);
+}
+
+#hint-button:hover {
+    background: rgba(0, 242, 255, 0.3);
+}
+
+/* Модальные окна (аналогично предыдущей игре) */
+.fake-detective-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--background-light);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: 2px solid var(--accent-color);
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .fake-detective-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .answer-options {
+        flex-direction: column;
+    }
+    
+    .answer-button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Утечка данных - Кибербезопасность</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/scenario-utechka.css">
+   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для всплывающих подсказок */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed var(--secondary-color);
+            cursor: help;
+            color: var(--accent-color);
+        }
+
+        .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--secondary-color) transparent transparent transparent;
+        }
+
+        @media (max-width: 768px) {
+            .tooltiptext {
+                width: 180px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Стили для кнопки "Назад" */
+      
+        .back-button {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1000;
+            background: rgba(18, 18, 53, 0.7);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        
+        .back-button:hover {
+            background: rgba(58, 107, 255, 0.2);
+            border-color: var(--secondary-color);
+        }
+        
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+   <div class="page-transition"></div>
+    
+    <!-- Кнопка "Назад" -->
+    <a href="../scenarios.html" class="back-button">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Назад
+    </a>
+    
+    <div class="scenario-container">
+        <div class="scenario-header">
+            <h1><span class="text-gradient">Утечка данных</span></h1>
+            <p class="subtitle">Пошаговое руководство по защите и реагированию</p>
+        </div>
+        
+        <div class="scenario-progress">
+            <div class="progress-step active" data-step="1">1. Проверка</div>
+            <div class="progress-step" data-step="2">2. Защита</div>
+            <div class="progress-step" data-step="3">3. Действия</div>
+            <div class="progress-step" data-step="4">4. Профилактика</div>
+        </div>
+        
+        <div class="scenario-content">
+            <!-- Шаг 1: Проверка -->
+            <div class="scenario-step active" data-step="1">
+                <h2>Проверьте, были ли ваши данные украдены</h2>
+                <p>Используйте сервис <a href="https://haveibeenpwned.com" target="_blank" class="tooltip">Have I Been Pwned
+                    <span class="tooltiptext">Бесплатный сервис для проверки, участвовал ли ваш email в известных утечках данных</span>
+                </a> для проверки своих email и паролей.</p>
+                
+                <div class="interactive-block">
+                    <div class="input-group">
+                        <label for="email-check">Введите ваш email:</label>
+                        <input type="email" id="email-check" placeholder="example@domain.com">
+                        <button class="cyber-button-small" id="check-email">Проверить</button>
+                    </div>
+                    <div class="result-box" id="email-result"></div>
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-icon">💡</div>
+                    <p>Если ваш email был найден в утечках, не паникуйте. Следуйте дальнейшим инструкциям.</p>
+                </div>
+                
+                <div class="step-buttons">
+                    <button class="next-step cyber-button">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Шаг 2: Защита -->
+            <div class="scenario-step" data-step="2">
+                <h2>Немедленные меры защиты</h2>
+                <div class="action-list">
+                    <div class="action-item">
+                        <div class="action-number">1</div>
+                        <div class="action-content">
+                            <h3>Смените пароли</h3>
+                            <p>Измените пароли для всех аккаунтов, где использовался <span class="tooltip"> скомпрометированный пароль
+                                <span class="tooltiptext">Пароль, который стал известен злоумышленникам из-за утечки данных</span>
+                            </span>.</p>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-number">2</div>
+                        <div class="action-content">
+                            <h3>Включите <span class="tooltip">двухфакторную аутентификацию
+                                <span class="tooltiptext">Дополнительная защита аккаунта с помощью кода из SMS или приложения</span>
+                            </span></h3>
+                            <p>Активируйте 2FA везде, где это возможно.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-buttons">
+                    <button class="prev-step cyber-button-outline">← Назад</button>
+                    <button class="next-step cyber-button">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Шаг 3: Действия -->
+            <div class="scenario-step" data-step="3">
+                <h2>Дополнительные действия при серьезной утечке</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <h3>Финансовые данные украдены</h3>
+                            <span class="accordion-icon">+</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul>
+                                <li>Немедленно свяжитесь с банком</li>
+                                <li>Заблокируйте карты и запросите новые</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-buttons">
+                    <button class="prev-step cyber-button-outline">← Назад</button>
+                    <button class="next-step cyber-button">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Шаг 4: Профилактика -->
+            <div class="scenario-step" data-step="4">
+                 <h2>Как предотвратить проблемы в будущем</h2>
+                
+                <div class="prevention-grid">
+                    <div class="prevention-card">
+                        <div class="prevention-icon">🔐</div>
+                        <h3>Менеджер паролей</h3>
+                        <p>Используйте <span class="tooltip">менеджер паролей
+                            <span class="tooltiptext">Программа для безопасного хранения и генерации сложных паролей (например, Kaspersky Password Manager)</span>
+                        </span> для создания уникальных паролей.</p>
+                    </div>
+                    
+                    <div class="prevention-card">
+                        <div class="prevention-icon">🔄</div>
+                        <h3>Регулярные проверки</h3>
+                        <p>Проверяйте свои аккаунты через Have I Been Pwned каждые 3 месяца.</p>
+                    </div>
+                </div>
+                
+                <div class="final-tip">
+                    <p>Теперь вы знаете как действовать при утечке данных. Регулярное соблюдение мер безопасности значительно снижает риски!</p>
+                </div>
+                <div class="step-buttons">
+                    <button class="prev-step cyber-button-outline">← Назад</button>
+                    <a href="../scenarios.html" class="cyber-button">Завершить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/scenario-utechka.js"></script>
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация шагов
+            const steps = document.querySelectorAll('.scenario-step');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const globalBackButton = document.getElementById('globalBackButton');
+            let currentStep = 1;
+            
+            // Функция показа шага
+            function showStep(stepNumber) {
+                steps.forEach(step => step.classList.remove('active'));
+                progressSteps.forEach(step => step.classList.remove('active'));
+                
+                document.querySelector(`.scenario-step[data-step="${stepNumber}"]`).classList.add('active');
+                
+                progressSteps.forEach(step => {
+                    if (parseInt(step.dataset.step) <= stepNumber) {
+                        step.classList.add('active');
+                    }
+                });
+                
+                currentStep = stepNumber;
+                
+                // Показываем/скрываем глобальную кнопку "Назад"
+                // if (stepNumber === 1) {
+                //     globalBackButton.style.display = 'none';
+                // } else {
+                //     globalBackButton.style.display = 'flex';
+                // }
+            }
+            
+            // Обработчики кнопок
+            document.querySelectorAll('.next-step').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (currentStep < steps.length) {
+                        showStep(currentStep + 1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.prev-step').forEach(button => {
+                button.addEventListener('click', () => navigateBack());
+            });
+            
+            // Глобальная кнопка "Назад"
+            globalBackButton.addEventListener('click', () => navigateBack());
+            
+            function navigateBack() {
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+            
+            // Инициализация первого шага
+            showStep(1);
+        // Инициализация всплывающих подсказок
+      
+            // Добавляем автоматическую поддержку tooltips
+            document.querySelectorAll('.tooltip').forEach(tooltip => {
+                tooltip.addEventListener('click', function(e) {
+                    if (window.innerWidth < 768) {
+                        e.preventDefault();
+                        const tooltipText = this.querySelector('.tooltiptext');
+                        tooltipText.style.visibility = tooltipText.style.visibility === 'visible' ? 'hidden' : 'visible';
+                        tooltipText.style.opacity = tooltipText.style.opacity === '1' ? '0' : '1';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
