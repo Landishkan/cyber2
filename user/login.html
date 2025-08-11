@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -314,7 +314,10 @@
         
         // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
-
+ const app = initializeApp(firebaseConfig); // новая строка
+   //  firebase.initializeApp(firebaseConfig);  старая строка
+    const auth = getAuth(app);
+         const db = getFirestore(app);
         // Элементы DOM
         const loginBtn = document.getElementById('login');
         const signupBtn = document.getElementById('signup');
@@ -351,40 +354,49 @@
         // Регистрация
         signupButton.addEventListener('click', signUp);
 
-        async function signUp() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
-            const errorElement = document.getElementById('signup-error');
+       async function signUp() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const name = document.getElementById('name').value;
+    const errorElement = document.getElementById('signup-error');
 
-            // Валидация
-            if (!name || !email || !password) {
-                errorElement.textContent = "Пожалуйста, заполните все поля";
-                errorElement.style.display = "block";
-                return;
-            }
+    // Валидация
+    if (!name || !email || !password) {
+        errorElement.textContent = "Пожалуйста, заполните все поля";
+        errorElement.style.display = "block";
+        return;
+    }
 
-            if (password.length < 6) {
-                errorElement.textContent = "Пароль должен содержать минимум 6 символов";
-                errorElement.style.display = "block";
-                return;
-            }
+    if (password.length < 6) {
+        errorElement.textContent = "Пароль должен содержать минимум 6 символов";
+        errorElement.style.display = "block";
+        return;
+    }
 
-            try {
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                // Обновляем имя пользователя
-                await userCredential.user.updateProfile({
-                    displayName: name
-                });
-                
-                // Перенаправляем после успешной регистрации
-                window.location.href = "../index.html";
-            } catch (error) {
-                console.error("Ошибка регистрации:", error);
-                errorElement.textContent = getErrorMessage(error.code);
-                errorElement.style.display = "block";
-            }
-        }
+    try {
+        // 1. Регистрация в Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 2. Обновляем displayName
+        await updateProfile(user, { displayName: name });
+
+        // 3. Сохраняем данные в Firestore
+        await setDoc(doc(db, "users", user.uid), {
+            email: email,
+            name: name,
+            points: 0,  // Начальное количество баллов
+            createdAt: serverTimestamp()  // Дата создания
+        });
+
+        // Перенаправляем после успешной регистрации
+        window.location.href = "../index.html";
+    } catch (error) {
+        console.error("Ошибка регистрации:", error);
+        errorElement.textContent = getErrorMessage(error.code);
+        errorElement.style.display = "block";
+    }
+}
 
         // Вход
         loginButton.addEventListener('click', signIn);
