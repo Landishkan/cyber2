@@ -316,8 +316,8 @@
         firebase.initializeApp(firebaseConfig);
  const app = initializeApp(firebaseConfig); // новая строка
    //  firebase.initializeApp(firebaseConfig);  старая строка
-    const auth = getAuth(app);
-         const db = getFirestore(app);
+    const auth = getAuth();
+         const db = getFirestore();
         // Элементы DOM
         const loginBtn = document.getElementById('login');
         const signupBtn = document.getElementById('signup');
@@ -440,3 +440,4 @@
     </script>
 </body>
 </html>
+
