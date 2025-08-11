@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -327,14 +327,6 @@
             
             <div class="profile-stats">
                 <div class="stat-item">
-                    <span class="stat-label">Уровень:</span>
-                    <span class="stat-value" id="user-level">Новичок</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Рейтинг:</span>
-                    <span class="stat-value" id="user-rating">0</span>
-                </div>
-                <div class="stat-item">
                     <span class="stat-label">Квестов:</span>
                     <span class="stat-value" id="user-quests">0</span>
                 </div>
@@ -379,35 +371,24 @@
             <section class="progress-section">
                 <h2 class="section-title">Прогресс обучения</h2>
                 
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Основы безопасности</span>
-                        <span>20%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 20%"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Фишинг и мошенничество</span>
-                        <span>0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Кибербуллинг</span>
-                        <span>0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
+                <div class="progress-item" data-topic="Фишинг">
+        <div class="progress-title">
+            <span>Фишинг</span>
+            <span>0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
+    <div class="progress-item" data-topic="Кибербуллинг">
+        <div class="progress-title">
+            <span>Кибербуллинг</span>
+            <span>0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
             </section>
         </div>
     </div>
@@ -430,37 +411,49 @@
 };
         
         // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
+         const app = initializeApp(firebaseConfig); // новая строка
+   //  firebase.initializeApp(firebaseConfig);  старая строка
+   
+        import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+
+const auth = getAuth(app);
+const db = getFirestore(app /* */);
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "../index.html";
+    } else {
+        // Основные данные из Auth
+        document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
+        document.getElementById('user-email').textContent = user.email;
         
-        // Проверка авторизации
-        firebase.auth().onAuthStateChanged(user => {
-            if (!user) {
-                window.location.href = "../index.html";
-            } else {
-                // Заполняем данные профиля
-                document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
-                document.getElementById('user-email').textContent = user.email;
-                
-                // Генерация аватара
-                const avatar = document.getElementById('user-avatar');
-                if (user.displayName) {
-                    avatar.textContent = user.displayName.charAt(0).toUpperCase();
-                }
-                
-                // Здесь можно загрузить дополнительные данные из Firestore
-                // Например:
-                // const db = firebase.firestore();
-                // db.collection("users").doc(user.uid).get().then(doc => {
-                //     if (doc.exists) {
-                //         const data = doc.data();
-                //         document.getElementById('user-level').textContent = data.level || 'Новичок';
-                //         document.getElementById('user-rating').textContent = data.rating || '0';
-                //         document.getElementById('user-quests').textContent = data.completedQuests || '0';
-                //     }
-                // });
+        // Аватар
+        const avatar = document.getElementById('user-avatar');
+        avatar.textContent = user.displayName?.charAt(0).toUpperCase() || 'U';
+
+        // Загрузка доп. данных из Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            document.getElementById('user-rating').textContent = userData.points || '0';
+        }
+
+        // Загрузка прогресса по темам
+        const progressSnapshot = await getDocs(collection(db, "users", user.uid, "progress"));
+        progressSnapshot.forEach((doc) => {
+            const topic = doc.id;
+            const percentage = doc.data().percentage;
+            console.log(`Тема: ${topic}, Прогресс: ${percentage}%`);
+            
+            // Пример: обновляем прогресс-бар на странице
+            const progressBar = document.querySelector(`[data-topic="${topic}"] .progress-fill`);
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
             }
         });
-        
+    }
+});
         // Выход из системы
         document.querySelector('.fa-sign-out-alt').closest('.nav-link').addEventListener('click', (e) => {
             e.preventDefault();
