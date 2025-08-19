@@ -409,191 +409,214 @@
 
     <script>
         // Конфигурация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAjDJPWVXFmBlWYRUf-IACsQrut_lEEFfc",
-            authDomain: "cyber-questor.firebaseapp.com",
-            projectId: "cyber-questor",
-            storageBucket: "cyber-questor.firebasestorage.app",
-            messagingSenderId: "347078202285",
-            appId: "1:347078202285:web:7ac8581765d5fdc76a4724",
-            measurementId: "G-GWS13K2FW1"
-        };
+     // Конфигурация Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAjDJPWVXFmBlWYRUf-IACsQrut_lEEFfc",
+    authDomain: "cyber-questor.firebaseapp.com",
+    projectId: "cyber-questor",
+    storageBucket: "cyber-questor.firebasestorage.app",
+    messagingSenderId: "347078202285",
+    appId: "1:347078202285:web:7ac8581765d5fdc76a4724",
+    measurementId: "G-GWS13K2FW1"
+};
+
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Определение лекций
+const LECTURES = {
+    'lecture_1': 'Основы безопасности',
+    'lecture_2': 'Фишинг и мошенничество', 
+    'lecture_3': 'Кибербуллинг',
+    'lecture_4': 'Защита персональных данных',
+    'lecture_5': 'Безопасность в социальных сетях'
+};
+
+let unsubscribeUserData = null;
+
+// Проверка авторизации и загрузка данных
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "../index.html";
+    } else {
+        // Заполняем основные данные профиля
+        document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
+        document.getElementById('user-email').textContent = user.email;
         
-        // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // Генерация аватара
+        const avatar = document.getElementById('user-avatar');
+        if (user.displayName) {
+            avatar.textContent = user.displayName.charAt(0).toUpperCase();
+            avatar.style.fontSize = '4rem';
+        }
+        
+        // Подписываемся на изменения данных пользователя в реальном времени
+        setupRealtimeUpdates(user.uid);
+    }
+});
 
-        // Определение лекций
-        const LECTURES = {
-            'lecture_1': 'Основы безопасности',
-            'lecture_2': 'Фишинг и мошенничество', 
-            'lecture_3': 'Кибербуллинг',
-            'lecture_4': 'Защита персональных данных',
-            'lecture_5': 'Безопасность в социальных сетях'
-        };
-
-        // Проверка авторизации и загрузка данных
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = "../index.html";
-            } else {
-                // Заполняем основные данные профиля
-                document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
-                document.getElementById('user-email').textContent = user.email;
+// Настройка прослушивания изменений в реальном времени
+function setupRealtimeUpdates(userId) {
+    // Отписываемся от предыдущего прослушивания если было
+    if (unsubscribeUserData) {
+        unsubscribeUserData();
+    }
+    
+    unsubscribeUserData = db.collection("users").doc(userId)
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                console.log("Данные обновлены:", userData);
                 
-                // Генерация аватара
-                const avatar = document.getElementById('user-avatar');
-                if (user.displayName) {
-                    avatar.textContent = user.displayName.charAt(0).toUpperCase();
-                    avatar.style.fontSize = '4rem';
-                }
+                // Обновляем статистику
+                updateUserStats(userData);
                 
-                // Загружаем данные из Firestore
-                await loadUserData(user.uid);
+                // Загружаем прогресс
+                loadProgressData(userData.progress || {});
+                
+                // Обновляем достижения
+                updateAchievements(userData);
             }
+        }, (error) => {
+            console.error("Ошибка прослушивания:", error);
         });
+}
 
-        // Загрузка данных пользователя из Firestore
-        async function loadUserData(userId) {
-            try {
-                document.body.classList.add('loading');
-                
-                const userDoc = await db.collection("users").doc(userId).get();
-                
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    
-                    // Обновляем статистику
-                    updateUserStats(userData);
-                    
-                    // Загружаем прогресс
-                    await loadProgressData(userData.progress || {});
-                    
-                    // Обновляем достижения
-                    updateAchievements(userData);
-                } else {
-                    console.log("Документ пользователя не найден");
-                }
-            } catch (error) {
-                console.error("Ошибка загрузки данных:", error);
-                alert("Ошибка загрузки данных профиля");
-            } finally {
-                document.body.classList.remove('loading');
-            }
-        }
+// Обновление статистики пользователя
+function updateUserStats(userData) {
+    // Расчет общего прогресса
+    const progress = userData.progress || {};
+    const overallProgress = calculateOverallProgress(progress);
+    
+    document.getElementById('overall-progress').textContent = `${overallProgress}%`;
+    
+    // Расчет уровня на основе прогресса
+    let level = 'Новичок';
+    let rating = 0;
+    let completedQuests = 0;
+    
+    if (overallProgress >= 80) level = 'Эксперт';
+    else if (overallProgress >= 50) level = 'Продвинутый';
+    else if (overallProgress >= 20) level = 'Ученик';
+    
+    // Подсчет завершенных квестов (прогресс > 0%)
+    completedQuests = Object.values(progress).filter(p => p > 0).length;
+    rating = completedQuests * 100 + overallProgress;
+    
+    document.getElementById('user-level').textContent = level;
+    document.getElementById('user-rating').textContent = Math.round(rating);
+    document.getElementById('user-quests').textContent = completedQuests;
+}
 
-        // Обновление статистики пользователя
-        function updateUserStats(userData) {
-            // Расчет общего прогресса
-            const progress = userData.progress || {};
-            const overallProgress = calculateOverallProgress(progress);
-            
-            document.getElementById('overall-progress').textContent = `${overallProgress}%`;
-            
-            // Расчет уровня на основе прогресса
-            let level = 'Новичок';
-            let rating = 0;
-            let completedQuests = 0;
-            
-            if (overallProgress >= 80) level = 'Эксперт';
-            else if (overallProgress >= 50) level = 'Продвинутый';
-            else if (overallProgress >= 20) level = 'Ученик';
-            
-            // Подсчет завершенных квестов (прогресс > 0%)
-            completedQuests = Object.values(progress).filter(p => p > 0).length;
-            rating = completedQuests * 100 + overallProgress;
-            
-            document.getElementById('user-level').textContent = level;
-            document.getElementById('user-rating').textContent = Math.round(rating);
-            document.getElementById('user-quests').textContent = completedQuests;
-        }
+// Расчет общего прогресса
+function calculateOverallProgress(progress) {
+    const progresses = Object.values(progress);
+    if (progresses.length === 0) return 0;
+    
+    const total = progresses.reduce((sum, p) => sum + p, 0);
+    return Math.round(total / progresses.length);
+}
 
-        // Расчет общего прогресса
-        function calculateOverallProgress(progress) {
-            const progresses = Object.values(progress);
-            if (progresses.length === 0) return 0;
-            
-            const total = progresses.reduce((sum, p) => sum + p, 0);
-            return Math.round(total / progresses.length);
-        }
-
-        // Загрузка и отображение прогресса
-        async function loadProgressData(progress) {
-            const progressContainer = document.getElementById('progress-container');
-            progressContainer.innerHTML = '';
-            
-            // Создаем элементы прогресса для каждой лекции
-            for (const [lectureId, lectureName] of Object.entries(LECTURES)) {
-                const progressValue = progress[lectureId] || 0;
-                
-                const progressItem = document.createElement('div');
-                progressItem.className = 'progress-item';
-                progressItem.innerHTML = `
-                    <div class="progress-title">
-                        <span>${lectureName}</span>
-                        <span>${progressValue}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressValue}%"></div>
-                    </div>
-                `;
-                
-                progressContainer.appendChild(progressItem);
-            }
-            
-            // Анимируем прогресс-бары
-            setTimeout(() => {
-                document.querySelectorAll('.progress-fill').forEach(bar => {
-                    bar.style.transition = 'width 1s ease-in-out';
-                });
-            }, 100);
-        }
-
-        // Обновление достижений
-        function updateAchievements(userData) {
-            const progress = userData.progress || {};
-            const overallProgress = calculateOverallProgress(progress);
-            
-            // Первые шаги - если есть любой прогресс
-            if (overallProgress > 0) {
-                document.getElementById('achievement-first-steps').classList.remove('locked');
-            }
-            
-            // Защитник - если завершено 3 лекции
-            const completedLectures = Object.values(progress).filter(p => p >= 80).length;
-            if (completedLectures >= 3) {
-                document.getElementById('achievement-protector').classList.remove('locked');
-            }
-            
-            // Звезда - общий прогресс > 70%
-            if (overallProgress >= 70) {
-                document.getElementById('achievement-star').classList.remove('locked');
-            }
-            
-            // Чемпион - все лекции завершены
-            if (Object.values(progress).every(p => p >= 80)) {
-                document.getElementById('achievement-champion').classList.remove('locked');
-            }
-        }
-
-        // Выход из системы
-        document.getElementById('logout-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            auth.signOut().then(() => {
-                window.location.href = "../index.html";
-            });
+// Загрузка и отображение прогресса
+async function loadProgressData(progress) {
+    const progressContainer = document.getElementById('progress-container');
+    progressContainer.innerHTML = '';
+    
+    // Создаем элементы прогресса для каждой лекции
+    for (const [lectureId, lectureName] of Object.entries(LECTURES)) {
+        const progressValue = progress[lectureId] || 0;
+        
+        const progressItem = document.createElement('div');
+        progressItem.className = 'progress-item';
+        progressItem.innerHTML = `
+            <div class="progress-title">
+                <span>${lectureName}</span>
+                <span>${progressValue}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progressValue}%"></div>
+            </div>
+        `;
+        
+        progressContainer.appendChild(progressItem);
+    }
+    
+    // Анимируем прогресс-бары
+    setTimeout(() => {
+        document.querySelectorAll('.progress-fill').forEach(bar => {
+            bar.style.transition = 'width 1s ease-in-out';
         });
+    }, 100);
+}
 
-        // Редактирование профиля
-        document.getElementById('edit-profile').addEventListener('click', () => {
-            alert('Функция редактирования профиля будет реализована в следующем обновлении!');
-        });
+// Обновление достижений
+function updateAchievements(userData) {
+    const progress = userData.progress || {};
+    const overallProgress = calculateOverallProgress(progress);
+    
+    // Первые шаги - если есть любой прогресс
+    if (overallProgress > 0) {
+        document.getElementById('achievement-first-steps').classList.remove('locked');
+    } else {
+        document.getElementById('achievement-first-steps').classList.add('locked');
+    }
+    
+    // Защитник - если завершено 3 лекции
+    const completedLectures = Object.values(progress).filter(p => p >= 80).length;
+    if (completedLectures >= 3) {
+        document.getElementById('achievement-protector').classList.remove('locked');
+    } else {
+        document.getElementById('achievement-protector').classList.add('locked');
+    }
+    
+    // Звезда - общий прогресс > 70%
+    if (overallProgress >= 70) {
+        document.getElementById('achievement-star').classList.remove('locked');
+    } else {
+        document.getElementById('achievement-star').classList.add('locked');
+    }
+    
+    // Чемпион - все лекции завершены
+    if (Object.values(progress).every(p => p >= 80)) {
+        document.getElementById('achievement-champion').classList.remove('locked');
+    } else {
+        document.getElementById('achievement-champion').classList.add('locked');
+    }
+}
 
-        // Обработка ошибок
-        window.addEventListener('error', (e) => {
-            console.error('Global error:', e.error);
-        });
+// Выход из системы
+document.getElementById('logout-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Отписываемся от прослушивания перед выходом
+    if (unsubscribeUserData) {
+        unsubscribeUserData();
+    }
+    
+    auth.signOut().then(() => {
+        window.location.href = "../index.html";
+    });
+});
+
+// Редактирование профиля
+document.getElementById('edit-profile').addEventListener('click', () => {
+    alert('Функция редактирования профиля будет реализована в следующем обновлении!');
+});
+
+// Обработка ошибок
+window.addEventListener('error', (e) => {
+    console.error('Global error:', e.error);
+});
+
+// Отписываемся от прослушивания при закрытии страницы
+window.addEventListener('beforeunload', () => {
+    if (unsubscribeUserData) {
+        unsubscribeUserData();
+    }
+});
     </script>
 </body>
 </html>
+
