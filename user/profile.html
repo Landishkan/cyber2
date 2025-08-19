@@ -403,220 +403,274 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <script>
         // Конфигурация Firebase
-     // Конфигурация Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyAjDJPWVXFmBlWYRUf-IACsQrut_lEEFfc",
-    authDomain: "cyber-questor.firebaseapp.com",
-    projectId: "cyber-questor",
-    storageBucket: "cyber-questor.firebasestorage.app",
-    messagingSenderId: "347078202285",
-    appId: "1:347078202285:web:7ac8581765d5fdc76a4724",
-    measurementId: "G-GWS13K2FW1"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjDJPWVXFmBlWYRUf-IACsQrut_lEEFfc",
+            authDomain: "cyber-questor.firebaseapp.com",
+            projectId: "cyber-questor",
+            storageBucket: "cyber-questor.firebasestorage.app",
+            messagingSenderId: "347078202285",
+            appId: "1:347078202285:web:7ac8581765d5fdc76a4724",
+            measurementId: "G-GWS13K2FW1"
+        };
 
-// Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-// Определение лекций
-const LECTURES = {
-    'lecture_1': 'Основы безопасности',
-    'lecture_2': 'Фишинг и мошенничество', 
-    'lecture_3': 'Кибербуллинг',
-    'lecture_4': 'Защита персональных данных',
-    'lecture_5': 'Безопасность в социальных сетях'
-};
+        // Включим отладку
+        firebase.firestore.setLogLevel('debug');
 
-let unsubscribeUserData = null;
+        const LECTURES = {
+            'lecture_1': 'Основы безопасности',
+            'lecture_2': 'Фишинг и мошенничество', 
+            'lecture_3': 'Кибербуллинг',
+            'lecture_4': 'Защита персональных данных',
+            'lecture_5': 'Безопасность в социальных сетях'
+        };
 
-// Проверка авторизации и загрузка данных
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "../index.html";
-    } else {
-        // Заполняем основные данные профиля
-        document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
-        document.getElementById('user-email').textContent = user.email;
-        
-        // Генерация аватара
-        const avatar = document.getElementById('user-avatar');
-        if (user.displayName) {
-            avatar.textContent = user.displayName.charAt(0).toUpperCase();
-            avatar.style.fontSize = '4rem';
+        let unsubscribeUserData = null;
+        let currentUser = null;
+
+        // Функция для отладки
+        function debugLog(message, data = null) {
+            console.log('DEBUG:', message, data);
+            const debugDiv = document.getElementById('debug-info') || createDebugDiv();
+            debugDiv.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
         }
-        
-        // Подписываемся на изменения данных пользователя в реальном времени
-        setupRealtimeUpdates(user.uid);
-    }
-});
 
-// Настройка прослушивания изменений в реальном времени
-function setupRealtimeUpdates(userId) {
-    // Отписываемся от предыдущего прослушивания если было
-    if (unsubscribeUserData) {
-        unsubscribeUserData();
-    }
-    
-    unsubscribeUserData = db.collection("users").doc(userId)
-        .onSnapshot((doc) => {
-            if (doc.exists) {
-                const userData = doc.data();
-                console.log("Данные обновлены:", userData);
-                
-                // Обновляем статистику
-                updateUserStats(userData);
-                
-                // Загружаем прогресс
-                loadProgressData(userData.progress || {});
-                
-                // Обновляем достижения
-                updateAchievements(userData);
+        function createDebugDiv() {
+            const div = document.createElement('div');
+            div.id = 'debug-info';
+            div.className = 'debug-info';
+            div.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.8);padding:10px;border-radius:5px;font-size:12px;z-index:1000;max-height:200px;overflow-y:auto;';
+            document.body.appendChild(div);
+            return div;
+        }
+
+        // Показываем загрузку
+        function showLoading() {
+            let overlay = document.getElementById('loading-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'loading-overlay';
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = '<div style="color:white;font-size:18px;">Загрузка...</div>';
+                document.body.appendChild(overlay);
             }
-        }, (error) => {
-            console.error("Ошибка прослушивания:", error);
+        }
+
+        // Скрываем загрузку
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+
+        // Проверка авторизации
+        auth.onAuthStateChanged(async (user) => {
+            debugLog('Auth state changed', user ? user.uid : 'No user');
+            
+            if (!user) {
+                window.location.href = "../index.html";
+                return;
+            }
+
+            currentUser = user;
+            document.getElementById('user-name').textContent = user.displayName || 'Пользователь';
+            document.getElementById('user-email').textContent = user.email;
+
+            const avatar = document.getElementById('user-avatar');
+            if (user.displayName) {
+                avatar.textContent = user.displayName.charAt(0).toUpperCase();
+                avatar.style.fontSize = '4rem';
+            }
+
+            showLoading();
+            await setupRealtimeUpdates(user.uid);
+            hideLoading();
         });
-}
 
-// Обновление статистики пользователя
-function updateUserStats(userData) {
-    // Расчет общего прогресса
-    const progress = userData.progress || {};
-    const overallProgress = calculateOverallProgress(progress);
-    
-    document.getElementById('overall-progress').textContent = `${overallProgress}%`;
-    
-    // Расчет уровня на основе прогресса
-    let level = 'Новичок';
-    let rating = 0;
-    let completedQuests = 0;
-    
-    if (overallProgress >= 80) level = 'Эксперт';
-    else if (overallProgress >= 50) level = 'Продвинутый';
-    else if (overallProgress >= 20) level = 'Ученик';
-    
-    // Подсчет завершенных квестов (прогресс > 0%)
-    completedQuests = Object.values(progress).filter(p => p > 0).length;
-    rating = completedQuests * 100 + overallProgress;
-    
-    document.getElementById('user-level').textContent = level;
-    document.getElementById('user-rating').textContent = Math.round(rating);
-    document.getElementById('user-quests').textContent = completedQuests;
-}
+        // Настройка реального времени
+        async function setupRealtimeUpdates(userId) {
+            debugLog('Setting up realtime updates for user:', userId);
 
-// Расчет общего прогресса
-function calculateOverallProgress(progress) {
-    const progresses = Object.values(progress);
-    if (progresses.length === 0) return 0;
-    
-    const total = progresses.reduce((sum, p) => sum + p, 0);
-    return Math.round(total / progresses.length);
-}
+            // Отписываемся от предыдущего слушателя
+            if (unsubscribeUserData) {
+                unsubscribeUserData();
+                debugLog('Unsubscribed from previous listener');
+            }
 
-// Загрузка и отображение прогресса
-async function loadProgressData(progress) {
-    const progressContainer = document.getElementById('progress-container');
-    progressContainer.innerHTML = '';
-    
-    // Создаем элементы прогресса для каждой лекции
-    for (const [lectureId, lectureName] of Object.entries(LECTURES)) {
-        const progressValue = progress[lectureId] || 0;
-        
-        const progressItem = document.createElement('div');
-        progressItem.className = 'progress-item';
-        progressItem.innerHTML = `
-            <div class="progress-title">
-                <span>${lectureName}</span>
-                <span>${progressValue}%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${progressValue}%"></div>
-            </div>
-        `;
-        
-        progressContainer.appendChild(progressItem);
-    }
-    
-    // Анимируем прогресс-бары
-    setTimeout(() => {
-        document.querySelectorAll('.progress-fill').forEach(bar => {
-            bar.style.transition = 'width 1s ease-in-out';
+            try {
+                // Сначала проверим, существует ли документ
+                const docRef = db.collection("users").doc(userId);
+                const docSnapshot = await docRef.get();
+                
+                if (!docSnapshot.exists) {
+                    debugLog('User document does not exist, creating...');
+                    // Создаем документ если его нет
+                    await docRef.set({
+                        email: currentUser.email,
+                        displayName: currentUser.displayName || currentUser.email.split('@')[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        progress: {},
+                        quizResults: {},
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    debugLog('User document created');
+                }
+
+                // Подписываемся на изменения
+                unsubscribeUserData = docRef.onSnapshot(
+                    (doc) => {
+                        debugLog('Snapshot received', doc.exists);
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            debugLog('User data:', userData);
+                            
+                            updateUserStats(userData);
+                            loadProgressData(userData.progress || {});
+                            updateAchievements(userData);
+                        } else {
+                            debugLog('Document does not exist');
+                        }
+                    },
+                    (error) => {
+                        debugLog('Snapshot error:', error);
+                        alert('Ошибка загрузки данных: ' + error.message);
+                    }
+                );
+
+                debugLog('Realtime listener setup complete');
+
+            } catch (error) {
+                debugLog('Setup error:', error);
+                alert('Ошибка настройки: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        // Обновление статистики
+        function updateUserStats(userData) {
+            debugLog('Updating user stats', userData);
+            
+            const progress = userData.progress || {};
+            const overallProgress = calculateOverallProgress(progress);
+            
+            document.getElementById('overall-progress').textContent = `${overallProgress}%`;
+            
+            let level = 'Новичок';
+            let rating = 0;
+            let completedQuests = 0;
+            
+            if (overallProgress >= 80) level = 'Эксперт';
+            else if (overallProgress >= 50) level = 'Продвинутый';
+            else if (overallProgress >= 20) level = 'Ученик';
+            
+            completedQuests = Object.values(progress).filter(p => p > 0).length;
+            rating = completedQuests * 100 + overallProgress;
+            
+            document.getElementById('user-level').textContent = level;
+            document.getElementById('user-rating').textContent = Math.round(rating);
+            document.getElementById('user-quests').textContent = completedQuests;
+        }
+
+        function calculateOverallProgress(progress) {
+            const progresses = Object.values(progress);
+            if (progresses.length === 0) return 0;
+            
+            const total = progresses.reduce((sum, p) => sum + p, 0);
+            return Math.round(total / progresses.length);
+        }
+
+        function loadProgressData(progress) {
+            debugLog('Loading progress data', progress);
+            
+            const progressContainer = document.getElementById('progress-container');
+            progressContainer.innerHTML = '';
+            
+            for (const [lectureId, lectureName] of Object.entries(LECTURES)) {
+                const progressValue = progress[lectureId] || 0;
+                
+                const progressItem = document.createElement('div');
+                progressItem.className = 'progress-item';
+                progressItem.innerHTML = `
+                    <div class="progress-title">
+                        <span>${lectureName}</span>
+                        <span>${progressValue}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progressValue}%"></div>
+                    </div>
+                `;
+                
+                progressContainer.appendChild(progressItem);
+            }
+        }
+
+        function updateAchievements(userData) {
+            const progress = userData.progress || {};
+            const overallProgress = calculateOverallProgress(progress);
+            
+            const achievements = {
+                'achievement-first-steps': overallProgress > 0,
+                'achievement-protector': Object.values(progress).filter(p => p >= 80).length >= 3,
+                'achievement-star': overallProgress >= 70,
+                'achievement-champion': Object.values(progress).every(p => p >= 80)
+            };
+            
+            Object.entries(achievements).forEach(([id, unlocked]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (unlocked) {
+                        element.classList.remove('locked');
+                    } else {
+                        element.classList.add('locked');
+                    }
+                }
+            });
+        }
+
+        // Выход
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (unsubscribeUserData) unsubscribeUserData();
+            auth.signOut();
         });
-    }, 100);
-}
 
-// Обновление достижений
-function updateAchievements(userData) {
-    const progress = userData.progress || {};
-    const overallProgress = calculateOverallProgress(progress);
-    
-    // Первые шаги - если есть любой прогресс
-    if (overallProgress > 0) {
-        document.getElementById('achievement-first-steps').classList.remove('locked');
-    } else {
-        document.getElementById('achievement-first-steps').classList.add('locked');
-    }
-    
-    // Защитник - если завершено 3 лекции
-    const completedLectures = Object.values(progress).filter(p => p >= 80).length;
-    if (completedLectures >= 3) {
-        document.getElementById('achievement-protector').classList.remove('locked');
-    } else {
-        document.getElementById('achievement-protector').classList.add('locked');
-    }
-    
-    // Звезда - общий прогресс > 70%
-    if (overallProgress >= 70) {
-        document.getElementById('achievement-star').classList.remove('locked');
-    } else {
-        document.getElementById('achievement-star').classList.add('locked');
-    }
-    
-    // Чемпион - все лекции завершены
-    if (Object.values(progress).every(p => p >= 80)) {
-        document.getElementById('achievement-champion').classList.remove('locked');
-    } else {
-        document.getElementById('achievement-champion').classList.add('locked');
-    }
-}
+        // Редактирование
+        document.getElementById('edit-profile').addEventListener('click', () => {
+            alert('Функция в разработке');
+        });
 
-// Выход из системы
-document.getElementById('logout-btn').addEventListener('click', (e) => {
-    e.preventDefault();
-    
-    // Отписываемся от прослушивания перед выходом
-    if (unsubscribeUserData) {
-        unsubscribeUserData();
-    }
-    
-    auth.signOut().then(() => {
-        window.location.href = "../index.html";
-    });
-});
+        // Очистка при закрытии
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeUserData) unsubscribeUserData();
+        });
 
-// Редактирование профиля
-document.getElementById('edit-profile').addEventListener('click', () => {
-    alert('Функция редактирования профиля будет реализована в следующем обновлении!');
-});
-
-// Обработка ошибок
-window.addEventListener('error', (e) => {
-    console.error('Global error:', e.error);
-});
-
-// Отписываемся от прослушивания при закрытии страницы
-window.addEventListener('beforeunload', () => {
-    if (unsubscribeUserData) {
-        unsubscribeUserData();
-    }
-});
+        // Тестовая функция для проверки записи
+        window.testWrite = async function() {
+            if (!currentUser) return;
+            
+            try {
+                await db.collection("users").doc(currentUser.uid).update({
+                    testField: new Date().toISOString(),
+                    lastTest: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                debugLog('Test write successful');
+            } catch (error) {
+                debugLog('Test write failed:', error);
+            }
+        };
     </script>
 </body>
 </html>
+
 
