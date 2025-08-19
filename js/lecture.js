@@ -1,7 +1,35 @@
-﻿document.addEventListener('DOMContentLoaded', function() {
+// Конфигурация Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAjDJPWVXFmBlWYRUf-IACsQrut_lEEFfc",
+    authDomain: "cyber-questor.firebaseapp.com",
+    projectId: "cyber-questor",
+    storageBucket: "cyber-questor.firebasestorage.app",
+    messagingSenderId: "347078202285",
+    appId: "1:347078202285:web:7ac8581765d5fdc76a4724",
+    measurementId: "G-GWS13K2FW1"
+};
+
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ID текущей лекции
+const LECTURE_ID = 'lecture_3'; // кибербуллинг - lecture_3
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверка авторизации
+    auth.onAuthStateChanged(user => {
+        if (!user) {
+            window.location.href = "../login.html";
+            return;
+        }
+        currentUser = user;
+        loadLectureProgress(user.uid);
+    });
+
     // Анимация прогресс-бара при скролле
     const progressBar = document.querySelector('.progress');
-    const lectureContent = document.querySelector('.lecture-content');
     
     function updateProgress() {
         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -27,45 +55,8 @@
         });
     }
     
-    // Проверяем при загрузке и при скролле
     window.addEventListener('load', checkAnimation);
     window.addEventListener('scroll', checkAnimation);
-    
-    // Имитация проверки теста
-    const quizSubmit = document.querySelector('.quiz-submit');
-    if (quizSubmit) {
-        quizSubmit.addEventListener('click', function() {
-            const selectedOption = document.querySelector('input[name="quiz1"]:checked');
-            
-            if (selectedOption) {
-                if (selectedOption.nextSibling.textContent.includes("Сохранить доказательства")) {
-                    alert('Правильно! Действительно важно сохранять доказательства и обращаться за помощью.');
-                } else {
-                    alert('Не совсем верно. Лучший вариант - сохранить доказательства и обратиться за помощью.');
-                }
-            } else {
-                alert('Пожалуйста, выберите вариант ответа');
-            }
-        });
-    }
-    
-    // Сохранение прогресса в localStorage
-    const lectureId = 'cyberbullying';
-    
-    function saveProgress() {
-        const scrollPosition = window.pageYOffset;
-        localStorage.setItem(lectureId, scrollPosition);
-    }
-    
-    function loadProgress() {
-        const savedPosition = localStorage.getItem(lectureId);
-        if (savedPosition) {
-            window.scrollTo(0, savedPosition);
-        }
-    }
-    
-    window.addEventListener('beforeunload', saveProgress);
-    loadProgress();
     
     // Плавная прокрутка для якорей
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -79,4 +70,189 @@
             }
         });
     });
+
+    // Сохранение прогресса чтения
+    let scrollSaveTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollSaveTimeout);
+        scrollSaveTimeout = setTimeout(saveScrollProgress, 1000);
+    });
 });
+
+let currentUser = null;
+let userProgress = 0;
+
+// Загрузка прогресса лекции
+async function loadLectureProgress(userId) {
+    try {
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            userProgress = userData.progress?.[LECTURE_ID] || 0;
+            updateProgressUI();
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки прогресса:', error);
+    }
+}
+
+// Сохранение прогресса прокрутки
+async function saveScrollProgress() {
+    if (!currentUser) return;
+
+    const scrollTop = window.pageYOffset;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollPercentage = Math.round((scrollTop / scrollHeight) * 100);
+    
+    // Сохраняем только если прокрутили более 80%
+    if (scrollPercentage >= 80 && userProgress < 80) {
+        await updateLectureProgress(80);
+    }
+}
+
+// Обновление прогресса лекции
+async function updateLectureProgress(progress) {
+    if (!currentUser || progress <= userProgress) return;
+
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            [`progress.${LECTURE_ID}`]: progress,
+            lastActivity: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        userProgress = progress;
+        updateProgressUI();
+        
+        // Показываем уведомление о прогрессе
+        if (progress === 100) {
+            showNotification('Лекция завершена! Пройдите тест для закрепления знаний.');
+        }
+    } catch (error) {
+        console.error('Ошибка сохранения прогресса:', error);
+    }
+}
+
+// Обновление UI прогресса
+function updateProgressUI() {
+    const progressElement = document.getElementById('lecture-progress');
+    if (progressElement) {
+        progressElement.textContent = `Прогресс: ${userProgress}%`;
+    }
+}
+
+// Функции для теста
+let quizScore = 0;
+const totalQuestions = 5;
+
+function checkAnswer(element, isCorrect) {
+    // Сбрасываем выделение у всех вариантов в этом вопросе
+    const question = element.closest('.quiz-question');
+    const options = question.querySelectorAll('.quiz-option');
+    options.forEach(opt => {
+        opt.classList.remove('correct', 'incorrect', 'selected');
+    });
+    
+    // Выделяем выбранный вариант
+    element.classList.add('selected');
+    if (isCorrect) {
+        element.classList.add('correct');
+    } else {
+        element.classList.add('incorrect');
+        
+        // Показываем правильный ответ
+        const correctOption = Array.from(options).find(opt => 
+            opt.getAttribute('onclick').includes('true')
+        );
+        if (correctOption) {
+            correctOption.classList.add('correct');
+        }
+    }
+}
+
+async function showResults() {
+    const questions = document.querySelectorAll('.quiz-question');
+    let score = 0;
+    
+    questions.forEach(question => {
+        const selected = question.querySelector('.selected');
+        if (selected && selected.classList.contains('correct')) {
+            score++;
+        }
+    });
+    
+    quizScore = score;
+    const percentage = (score / totalQuestions) * 100;
+    
+    const resultsDiv = document.getElementById('quiz-results');
+    resultsDiv.style.display = 'block';
+    resultsDiv.innerHTML = `
+        <h4>Результаты теста</h4>
+        <p>Правильных ответов: ${score} из ${totalQuestions}</p>
+        <p>Оценка: ${percentage >= 80 ? 'Отлично' : percentage >= 60 ? 'Хорошо' : 'Нужно повторить'}</p>
+        ${percentage >= 80 ? '<p class="success">Отлично! Вы хорошо усвоили материал!</p>' : ''}
+    `;
+    
+    // Сохраняем результат теста
+    if (currentUser) {
+        await saveQuizResults(score, percentage);
+    }
+    
+    // Прокрутка к результатам
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Сохранение результатов теста
+async function saveQuizResults(score, percentage) {
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            [`quizResults.${LECTURE_ID}`]: {
+                score: score,
+                total: totalQuestions,
+                percentage: percentage,
+                completedAt: firebase.firestore.FieldValue.serverTimestamp()
+            },
+            [`progress.${LECTURE_ID}`]: percentage, // Обновляем прогресс
+            lastActivity: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        userProgress = percentage;
+        updateProgressUI();
+        
+        // Показываем уведомление
+        showNotification(`Тест завершен! Ваш прогресс: ${percentage}%`);
+        
+    } catch (error) {
+        console.error('Ошибка сохранения результатов:', error);
+    }
+}
+
+// Вспомогательные функции
+function showNotification(message) {
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 255, 136, 0.9);
+        color: #000;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Выход из системы
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "../index.html";
+    });
+}
